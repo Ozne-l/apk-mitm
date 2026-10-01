@@ -43,7 +43,18 @@ export default async function modifyManifest(
     })
   }
 
-  await fs.writeFile(path, xml.js2xml(document, { spaces: 4 }))
+  await fs.writeFile(
+    path,
+    xml.js2xml(document, {
+      spaces: 4,
+      attributeValueFn: (_, name, __, element) =>
+        String((element as xml.Element).attributes![name])
+          .replace(/&/g, '&amp;')
+          .replace(/</g, '&lt;')
+          .replace(/>/g, '&gt;')
+          .replace(/"/g, '&quot;'),
+    }),
+  )
 
   return { usesAppBundle }
 }
